@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <link rel="stylesheet" href="/static/index.css">
+
+      
+</head>
+
+<body>
+    <div id="content">
+        {% if loggedIn %}
+        <h1>欢迎访问 {{ currentUser.Username }} 的日记本！</h1>
+        <button id="logout-btn">退出登录</button>
+        {% else %}
+        <h1>欢迎访问赛博日记系统</h1>
+        <a href="/login" id="login-btn">登录</a>
+        <a href="/register" id="register-btn">注册</a>
+        <div class="animated-element"></div>
+        {% endif %}
+    </div>
+
+    {% if loggedIn %}
+    <section class="blog-block">
+        <h1>日记信息</h1>
+        <div id="blog">
+            <!-- 这里显示日记信息，可以用JavaScript从后端获取并显示 -->
+            <h2>{{ blog_info }}</h2>
+        </div>
+    </section>
+    <section class="blog-block">
+        <h1>区块链信息</h1>
+        <div id="blockchain">
+            <!-- 添加这个元素用于显示区块链信息 -->
+            <h2>{{ blockchain_info }}</h2>
+        </div>
+    </section>
+    {% endif %}
+    {% if loggedIn %}
+    <div style="margin-top: 20px;">
+        <button id="add-blog-button" onclick="showBlogInput()">添加日记</button>
+        <button id="validate" onclick="validate()">验证区块链</button>
+    </div>
+
+    <div id="blog-input" style="display: none; margin-top: 20px;">
+        <input type="text" id="blog-content" placeholder="在这里输入日记内容...">
+        <button id="send-blog-button" onclick="submitBlog()">提交日记</button>
+    </div>
+    {% endif %}
+
+    <script>
+        // 如果已登录，获取日记和区块链信息
+        {% if loggedIn %}
+        // 获取区块链和日记信息
+        function getBlockchainAndBlogInfo() {
+            fetch('/loginin', {
+                method: 'GET',
+                credentials: 'include',  // 保持跨域请求时的 cookie 传递
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // 更新区块链信息和日记信息的显示
+                        document.getElementById('blockchain').innerHTML = data.blockchainInfo;
+                        document.getElementById('blog').innerHTML = data.blogInfo;
+                    } else {
+                        // 处理获取信息失败的情况
+                        console.error('获取信息失败:', data.message);
+                        window.location.href = "/error"
+                    }
+                })
+                .catch(error => {
+                    // 处理请求出错的情况
+                    console.error('请求出错:', error);
+                    window.location.href = "/error"
+                });
+        }
+
+        // 在页面加载完成后调用获取信息的函数
+        document.addEventListener('DOMContentLoaded', function () {
+            getBlockchainAndBlogInfo();
+        });
+
+        // 登出按钮点击事件
+        document.getElementById('logout-btn').addEventListener('click', async function () {
+            // 这里添加JavaScript代码实现登出逻辑，例如向后端发送登出请求
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': '{{ session['username'] }}'
+                }
+                });
+
+                if (response.ok) {
+                    // 登出成功，重定向到登录页面
+                    window.location.href = "/login";
+                } else {
+                    console.error('Logout Error:', response);
+                }
+            } catch (error) {
+                console.error('Logout Error:', error);
+                window.location.href = "/error"
+            }
+        });
+
+        {% endif %}
+    </script>
+    <script>
+        // JavaScript函数用于显示输入框
+        function showBlogInput() {
+            document.getElementById('add-blog-button').style.display = 'none';
+            document.getElementById('blog-input').style.display = 'block';
+        }
+
+        // JavaScript函数用于提交日记
+        function submitBlog() {
+            const content = document.getElementById('blog-content').value;
+
+            // 向后端发送写日记的请求
+            fetch('/loginin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: content })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // 写日记成功，可以根据需要进行其他处理
+                        if (data.refresh) {
+                            location.reload();
+                        }
+                    } else {
+                        // 写日记失败，可以根据需要进行其他处理
+                        alert('日记提交失败: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    // 处理请求出错的情况
+                    console.error('请求出错:', error);
+                    window.location.href = "/error"
+                });
+        }
+    </script>
+    <script>
+        function validate() {
+            //向后端发送验证的请求
+            fetch('/validate', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('验证成功: ' + data.message)
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    // 处理请求出错的情况
+                    console.error('请求出错:', error);
+                    window.location.href = "/error"
+                });
+        }
+    </script>
+</body>
+
+</html>
