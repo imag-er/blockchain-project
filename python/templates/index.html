@@ -13,10 +13,10 @@
 <body>
     <div id="content">
         {% if loggedIn %}
-        <h1>欢迎访问 {{ currentUser.Username }} 的日记本！</h1>
+        <h1>欢迎访问 {{ currentUser.Username }} 的博客本！</h1>
         <button id="logout-btn">退出登录</button>
         {% else %}
-        <h1>欢迎访问赛博日记系统</h1>
+        <h1>欢迎访问赛博博客系统</h1>
         <a href="/login" id="login-btn">登录</a>
         <a href="/register" id="register-btn">注册</a>
         <div class="animated-element"></div>
@@ -25,9 +25,9 @@
 
     {% if loggedIn %}
     <section class="blog-block">
-        <h1>日记信息</h1>
+        <h1>博客信息</h1>
         <div id="blog">
-            <!-- 这里显示日记信息，可以用JavaScript从后端获取并显示 -->
+            <!-- 这里显示博客信息，可以用JavaScript从后端获取并显示 -->
             <h2>{{ blog_info }}</h2>
         </div>
     </section>
@@ -41,20 +41,20 @@
     {% endif %}
     {% if loggedIn %}
     <div style="margin-top: 20px;">
-        <button id="add-blog-button" onclick="showBlogInput()">添加日记</button>
+        <button id="add-blog-button" onclick="showBlogInput()">添加博客</button>
         <button id="validate" onclick="validate()">验证区块链</button>
     </div>
 
     <div id="blog-input" style="display: none; margin-top: 20px;">
-        <input type="text" id="blog-content" placeholder="在这里输入日记内容...">
-        <button id="send-blog-button" onclick="submitBlog()">提交日记</button>
+        <input type="text" id="blog-content" placeholder="在这里输入博客内容...">
+        <button id="send-blog-button" onclick="submitBlog()">提交博客</button>
     </div>
     {% endif %}
 
     <script>
-        // 如果已登录，获取日记和区块链信息
+        // 如果已登录，获取博客和区块链信息
         {% if loggedIn %}
-        // 获取区块链和日记信息
+        // 获取区块链和博客信息
         function getBlockchainAndBlogInfo() {
             fetch('/loginin', {
                 method: 'GET',
@@ -63,7 +63,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // 更新区块链信息和日记信息的显示
+                        // 更新区块链信息和博客信息的显示
                         document.getElementById('blockchain').innerHTML = data.blockchainInfo;
                         document.getElementById('blog').innerHTML = data.blogInfo;
                     } else {
@@ -116,11 +116,11 @@
             document.getElementById('blog-input').style.display = 'block';
         }
 
-        // JavaScript函数用于提交日记
+        // JavaScript函数用于提交博客
         function submitBlog() {
             const content = document.getElementById('blog-content').value;
 
-            // 向后端发送写日记的请求
+            // 向后端发送写博客的请求
             fetch('/loginin', {
                 method: 'POST',
                 headers: {
@@ -131,13 +131,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // 写日记成功，可以根据需要进行其他处理
+                        // 写博客成功，可以根据需要进行其他处理
                         if (data.refresh) {
                             location.reload();
                         }
                     } else {
-                        // 写日记失败，可以根据需要进行其他处理
-                        alert('日记提交失败: ' + data.message);
+                        // 写博客失败，可以根据需要进行其他处理
+                        alert('博客提交失败: ' + data.message);
                     }
                 })
                 .catch(error => {
