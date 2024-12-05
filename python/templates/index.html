@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页</title>
     <link rel="stylesheet" href="/static/index.css">
+    <script src="/static/marked.min.js"></script>
 
 
 </head>
@@ -27,17 +28,14 @@
     <section class="blog-block">
         <h1>博客信息</h1>
         <div id="blog">
-            <!-- 这里显示博客信息，可以用JavaScript从后端获取并显示 -->
-            {% for blog in blogInfo %}
-            <h2>{{ blog }}</h2>
-            {% endfor %}
+         
         </div>
     </section>
     <section class="blog-block">
         <h1>区块链信息</h1>
         <div id="blockchain">
             <!-- 添加这个元素用于显示区块链信息 -->
-            <h2>{{ blockchain_info }}</h2>
+            <h2>{{ blockchain_info }}
         </div>
     </section>
     {% endif %}
@@ -73,14 +71,12 @@
                         displayBlogInfo(blogInfo);
                     } else {
                         // 处理获取信息失败的情况
-                        console.error('获取信息失败:', data.message);
-                        window.location.href = "/error"
+                        window.alert('获取信息失败:'+ data.message);
                     }
                 })
                 .catch(error => {
                     // 处理请求出错的情况
-                    console.error('请求出错:', error);
-                    window.location.href = "/error"
+                    window.alert('请求出错:'+ error);
                 });
         }
 
@@ -89,9 +85,11 @@
             blogContainer.innerHTML = ''; // 清空现有内容
 
             blogInfo.forEach(blog => {
-                const blogElement = document.createElement('h2');
-                blogElement.textContent = blog; // 假设 blog 是一个字符串
+                const blogElement = document.createElement('span');
+                
+                blogElement.innerHTML = marked.parse(blog); // 假设 blog 是一个字符串
                 blogContainer.appendChild(blogElement);
+                blogContainer.appendChild(document.createElement('hr'));
             });
         }
         // 在页面加载完成后调用获取信息的函数
@@ -114,11 +112,11 @@
                     // 登出成功，重定向到登录页面
                     window.location.href = "/login";
                 } else {
-                    console.error('Logout Error:', response);
+                    alert('Logout Error:'+ response);
                 }
             } catch (error) {
-                console.error('Logout Error:', error);
-                window.location.href = "/error"
+                alert('Logout Error:'+ error);
+                
             }
         });
 
@@ -157,8 +155,7 @@
                 })
                 .catch(error => {
                     // 处理请求出错的情况
-                    console.error('请求出错:', error);
-                    window.location.href = "/error"
+                    alert('请求出错:'+ error);
                 });
         }
     </script>
@@ -181,8 +178,7 @@
                 })
                 .catch(error => {
                     // 处理请求出错的情况
-                    console.error('请求出错:', error);
-                    window.location.href = "/error"
+                    alert('请求出错:' + error);
                 });
         }
     </script>

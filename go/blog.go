@@ -62,7 +62,7 @@ func viewBlogEntries(username string) []string {
 				// 去重逻辑
 				entryKey := entry.Timestamp.Format("2006-01-02 15:04:05") + entry.Content
 				if _, seen := seenEntries[entryKey]; !seen {
-					blogEntry := fmt.Sprintf("[%s] %s", entry.Timestamp.Format("2006-01-02 15:04:05"), entry.Content)
+					blogEntry := fmt.Sprintf("%s\n%s", entry.Timestamp.Format("2006-01-02 15:04:05"), entry.Content)
 					blogEntries = append(blogEntries, blogEntry)
 					seenEntries[entryKey] = struct{}{}
 				}
@@ -73,4 +73,3 @@ func viewBlogEntries(username string) []string {
 	// 返回包含博客信息的字符串切片
 	return blogEntries
 }
-
