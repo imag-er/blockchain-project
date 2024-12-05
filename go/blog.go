@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"strings"
 )
 
 // 提交博客入口
@@ -52,9 +51,9 @@ func checkBlogIntegrity(w http.ResponseWriter) {
 }
 
 // 查看所有博客
-func viewBlogEntries(username string) string {
+func viewBlogEntries(username string) []string {
 	seenEntries := make(map[string]struct{})
-	var Bloginfo strings.Builder
+	var blogEntries []string
 
 	for _, block := range blockchain.Blocks {
 		// 检查区块的用户名是否与当前登录用户一致
@@ -63,13 +62,15 @@ func viewBlogEntries(username string) string {
 				// 去重逻辑
 				entryKey := entry.Timestamp.Format("2006-01-02 15:04:05") + entry.Content
 				if _, seen := seenEntries[entryKey]; !seen {
-					Bloginfo.WriteString(fmt.Sprintf("[%s] %s\n", entry.Timestamp.Format("2006-01-02 15:04:05"), entry.Content))
+					blogEntry := fmt.Sprintf("[%s] %s", entry.Timestamp.Format("2006-01-02 15:04:05"), entry.Content)
+					blogEntries = append(blogEntries, blogEntry)
 					seenEntries[entryKey] = struct{}{}
 				}
 			}
 		}
 	}
 
-	// 返回包含博客信息的字符串
-	return Bloginfo.String()
+	// 返回包含博客信息的字符串切片
+	return blogEntries
 }
+

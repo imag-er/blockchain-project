@@ -7,7 +7,7 @@
     <title>首页</title>
     <link rel="stylesheet" href="/static/index.css">
 
-      
+
 </head>
 
 <body>
@@ -28,7 +28,9 @@
         <h1>博客信息</h1>
         <div id="blog">
             <!-- 这里显示博客信息，可以用JavaScript从后端获取并显示 -->
-            <h2>{{ blog_info }}</h2>
+            {% for blog in blogInfo %}
+            <h2>{{ blog }}</h2>
+            {% endfor %}
         </div>
     </section>
     <section class="blog-block">
@@ -54,6 +56,8 @@
     <script>
         // 如果已登录，获取博客和区块链信息
         {% if loggedIn %}
+
+        let blogInfo;
         // 获取区块链和博客信息
         function getBlockchainAndBlogInfo() {
             fetch('/loginin', {
@@ -65,7 +69,8 @@
                     if (data.status === 'success') {
                         // 更新区块链信息和博客信息的显示
                         document.getElementById('blockchain').innerHTML = data.blockchainInfo;
-                        document.getElementById('blog').innerHTML = data.blogInfo;
+                        blogInfo = data.blogInfo;
+                        displayBlogInfo(blogInfo);
                     } else {
                         // 处理获取信息失败的情况
                         console.error('获取信息失败:', data.message);
@@ -79,6 +84,16 @@
                 });
         }
 
+        function displayBlogInfo(blogInfo) {
+            const blogContainer = document.getElementById('blog');
+            blogContainer.innerHTML = ''; // 清空现有内容
+
+            blogInfo.forEach(blog => {
+                const blogElement = document.createElement('h2');
+                blogElement.textContent = blog; // 假设 blog 是一个字符串
+                blogContainer.appendChild(blogElement);
+            });
+        }
         // 在页面加载完成后调用获取信息的函数
         document.addEventListener('DOMContentLoaded', function () {
             getBlockchainAndBlogInfo();
@@ -91,8 +106,8 @@
                 const response = await fetch('/logout', {
                     method: 'POST',
                     headers: {
-                        'Authorization': '{{ session['username'] }}'
-                }
+                        'Authorization': '{{ session["username"] }}'
+                    }
                 });
 
                 if (response.ok) {

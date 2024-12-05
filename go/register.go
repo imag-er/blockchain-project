@@ -22,7 +22,7 @@ func logininHandler(w http.ResponseWriter, r *http.Request) {
 	type Response struct {
 		Status         string `json:"status"`
 		BlockchainInfo string `json:"blockchainInfo"`
-		BlogInfo       string `json:"blogInfo"`
+		BlogInfo       []string `json:"blogInfo"`
 		Refresh        string `json:"refresh"`
 	}
 
