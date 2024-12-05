@@ -1,3 +1,3 @@
-#!/opt/homebrew/bin/fish
+#!/bin/sh
 
 docker-compose -p blockchain down
